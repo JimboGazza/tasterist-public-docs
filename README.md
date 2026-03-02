@@ -8,10 +8,6 @@ Tasterist is a custom platform designed around real admin workflows: managing ta
 
 You can view the public landing page at [tasterist.com](https://tasterist.com).
 
-## Book A Full Tour
-
-If you would like a guided tour of the full platform, please email [james@tasterist.com](mailto:james@tasterist.com).
-
 ## Bespoke Build Enquiries
 
 If you would like a similar tailored system for your club or business, contact me at [james@tasterist.com](mailto:james@tasterist.com).
