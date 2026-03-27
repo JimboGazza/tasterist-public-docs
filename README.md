@@ -14,6 +14,11 @@ If you would like a similar tailored system for your club or business, contact m
 
 ## Recent Changelog Highlights
 
+- 2026-03-26: Confirm Taster two-step review flow, dashboard redesign (cleaner hotlead list and visual programme stats), dedicated My Notes page, hotlead bin/delete actions, and search hotlead filter improvements.
+- 2026-03-25: Display size preference setting and completed hotlead visibility in search.
+- 2026-03-23: Hotleads automatically marked complete when a taster is scheduled from them.
+- 2026-03-22: Hotleads access control moved into admin settings, collapsible search filters, admin task panel repositioning, Cloudflare worker workflow improvements, and search page viewport fixes.
+- 2026-03-21: Database startup resilience improvements (deferred init, 503 fallback during outages).
 - 2026-02-25: Dashboard and Stats layout refinements, month-view spacing fixes, and faster Find Taster experience.
 - 2026-02-25: Day-view improvements with larger clickable taster rows and direct search handoff into Find Taster.
 - 2026-02-25: Data quality safeguards for duplicate/mirrored session handling and safer leaver upsert behavior.

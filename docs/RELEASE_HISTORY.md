@@ -5,9 +5,9 @@ Auto-generated from git history.
 ## Snapshot
 
 - Current app version file: `1.0.2`
-- Current HEAD: `71a2ecc`
-- Latest commit date: 2026-02-25 14:21 UTC
-- Total commits: 155
+- Current HEAD: `1cb252a`
+- Latest commit date: 2026-03-26 10:04 UTC
+- Total commits: 188
 
 ## Release Discipline
 
@@ -175,3 +175,38 @@ Auto-generated from git history.
 | `0566e63` | 2026-02-25 13:43 UTC | James Gardner | Upsert duplicate leavers safely and expand stats monthly columns |
 | `bb69a94` | 2026-02-25 14:15 UTC | James Gardner | Speed up Find Taster and lock day-row height with notes |
 | `71a2ecc` | 2026-02-25 14:21 UTC | James Gardner | Adjust dashboard/stats metrics and fix month view clipping |
+| `4c81a8a` | 2026-03-21 09:59 UTC | James Gardner | Defer database init until requests |
+| `56e1262` | 2026-03-21 11:04 UTC | James Gardner | Return 503 while database is unavailable |
+| `c1b7bfe` | 2026-03-21 12:07 UTC | James Gardner | Reduce startup stalls during database outages |
+| `4fb1d19` | 2026-03-22 16:50 UTC | James Gardner | Refine dashboard and admin workflows |
+| `a595964` | 2026-03-22 17:01 UTC | James Gardner | Move hotleads access control into admin settings |
+| `d37a59c` | 2026-03-22 17:16 UTC | James Gardner | Harden hotleads page and tighten admin task staff layout |
+| `15fda91` | 2026-03-22 17:19 UTC | James Gardner | Reposition and expand open admin tasks list |
+| `f4ab3a3` | 2026-03-22 17:26 UTC | James Gardner | Add missing Postgres hotleads no-space migration |
+| `2761664` | 2026-03-22 17:39 UTC | James Gardner | Limit hotlead creation to manual adds |
+| `d32745a` | 2026-03-22 17:40 UTC | James Gardner | Remove dashboard programme legend |
+| `857709a` | 2026-03-22 17:52 UTC | James Gardner | Move open admin tasks to page bottom |
+| `3d27885` | 2026-03-22 18:17 UTC | James Gardner | Improve search filters and stats links |
+| `549909a` | 2026-03-22 18:21 UTC | James Gardner | Fix stats signup logic |
+| `4d46783` | 2026-03-22 18:32 UTC | James Gardner | Make search filters collapsible |
+| `53d4607` | 2026-03-22 18:53 UTC | James Gardner | Adjust dashboard hotleads placeholder and email domain allow |
+| `36009e8` | 2026-03-22 18:58 UTC | James Gardner | Update email deployment docs |
+| `5327317` | 2026-03-22 19:12 UTC | James Gardner | Fix support email owner delivery |
+| `d035a8d` | 2026-03-22 19:22 UTC | James Gardner | Restrict support email to tasterist inbox |
+| `5118ed1` | 2026-03-22 19:28 UTC | James Gardner | Allow tasterist email recipients |
+| `a9265f0` | 2026-03-22 19:35 UTC | James Gardner | Fix dark hotlead stat text |
+| `ea54315` | 2026-03-22 19:36 UTC | James Gardner | Add spacing between search filters |
+| `e026089` | 2026-03-22 19:40 UTC | James Gardner | Reduce search filter scrollbar gutter |
+| `f49b42f` | 2026-03-22 19:43 UTC | James Gardner | Constrain search page panels to viewport |
+| `a938a26` | 2026-03-22 19:58 UTC | James Gardner | Trim search page viewport overflow |
+| `25b4762` | 2026-03-22 20:01 UTC | James Gardner | Fit search page to main content height |
+| `a0af3f5` | 2026-03-22 20:29 UTC | James Gardner | Filter hotlead account viewer targets |
+| `dbc1a18` | 2026-03-22 20:39 UTC | James Gardner | Preserve Cloudflare worker vars on deploy |
+| `a830989` | 2026-03-22 21:44 UTC | James Gardner | Standardize notes and edit pickers |
+| `570f5be` | 2026-03-22 21:50 UTC | James Gardner | Automate Cloudflare worker deploy |
+| `114e5b7` | 2026-03-22 22:21 UTC | James Gardner | Use local-only Cloudflare worker workflow |
+| `2e46dea` | 2026-03-23 18:10 UTC | James Gardner | Complete hotleads when scheduling tasters |
+| `efbff5b` | 2026-03-25 15:21 UTC | James Gardner | Add completed hotleads and search visibility |
+| `51026ad` | 2026-03-25 15:34 UTC | James Gardner | Add display size preference |
+| `5b86b2e` | 2026-03-25 15:46 UTC | James Gardner | Refine desktop smaller dashboard mode |
+| `1cb252a` | 2026-03-26 10:04 UTC | James Gardner | Dashboard redesign, confirm taster flow, hotlead filters and bin, my-notes page |

@@ -11,9 +11,11 @@ It is intended to be GitHub-facing project documentation and should be updated a
 Tasterist is an operations-first web app for class/taster administration:
 
 - Dashboard, Today, Month, and Stats operational views.
-- Add Taster and Record Leaver flows.
+- Add Taster (with two-step review/confirm flow) and Record Leaver flows.
 - Find Taster search/edit/reschedule workflow.
 - Admin Tasks workflow for attendance/admin checklist completion.
+- Hotleads pipeline for waiting-list contacts: claim, action, archive, and delete.
+- My Notes page for personal to-do lists and free-text notes.
 - Account management with role controls and password security gates.
 - Email scheduling/reporting with Cloudflare worker integration.
 - Import workflows for external class data.
@@ -34,6 +36,7 @@ Tasterist is an operations-first web app for class/taster administration:
 - `users`: Auth accounts with roles and password-change enforcement flags.
 - `user_admin_days`: User ownership mapping for admin day/programme cells.
 - `class_sessions`: Timetable/session templates.
+- `hotleads`: Waiting-list contact pipeline entries. Status flags: `claimed`, `no_space`, `inactive`, `completed`. Access mode is admin-configurable via `app_settings`.
 - `audit_logs`: App-level operational and security actions.
 - `app_settings`: Feature switches and environment-backed behavior.
 
@@ -44,6 +47,7 @@ Tasterist is an operations-first web app for class/taster administration:
 - Owner/admin role checks for privileged operations.
 - Mandatory password-change flow for first login / default-password accounts.
 - Emergency owner credential path controlled by env/secret values.
+- Hotlead hard-delete (permanent removal) gated on admin role (`can_view_all_hotleads`).
 
 ## Development Timeline Summary
 
@@ -57,10 +61,24 @@ The complete commit-by-commit history is in `docs/RELEASE_HISTORY.md`. Major pha
 6. Dashboard/day/month/admin UX iteration and layout scaling.
 7. Find Taster performance and quality-of-life tooling.
 8. Stats/dashboard metric realignment and operational reporting updates.
+9. Hotleads pipeline, My Notes page, Confirm Taster flow, and dashboard redesign.
 
-## Operator Request Timeline (Recent Sprint)
+## Operator Request Timeline (Recent Sprint — March 2026)
 
 Recent delivery cycles were driven by production-like operator feedback. Main themes:
+
+1. **Confirm Taster flow**: Two-step review/confirm on the Add Taster page so staff can check details before saving. Centered summary card shows taster date, class, session, location, child name, notes, and any hotlead link or reschedule context.
+2. **Dashboard redesign**: Removed bigger/smaller density setting and personal To-Do & Notes section. Hotlead rows rendered as a clean borderless list (fixed 34px row height, no card gaps). "This Month By Programme" replaced with visual stat blocks per programme.
+3. **My Notes page** (`/my-notes`): Dedicated page for personal to-do list (left) and free-text notes (right), linked from the sidebar OVERVIEW section. Sidebar nav shows open task count.
+4. **Hotlead bin/delete actions**: "No Space" button replaced with a bin icon. In Claim Hotleads (unclaimed leads), bin permanently deletes the record (admin only). In My Hotleads (claimed leads), bin archives the lead (marks no_space, keeps record). "Show Completed" renamed to "Show Completed / Archive".
+5. **Search hotlead improvements**: Delete button added to hotlead rows in search results (admin only). New filter groups: "Hotlead Status" (active / no space / inactive) and "Hotlead Claimed" (unclaimed / claimed).
+6. **Light mode fixes**: Confirm taster card fully themed for light mode.
+7. **Database resilience**: Deferred database init until first request, 503 fallback while DB is unavailable, reduced startup stalls.
+8. **Hotleads access control**: Mode setting moved into Admin Console (`app_settings`) rather than environment variable.
+9. **Search page viewport**: Panels constrained to viewport height, collapsible filter sidebar.
+10. **Cloudflare worker workflow**: Automated deploy, local-only worker mode, preserved environment variables on redeploy.
+
+## Operator Request Timeline (Previous Sprint — February 2026)
 
 1. Dashboard and stats graph readability and placement of tasters/leavers context text.
 2. Month/day/add/admin layout scaling so cards align to viewport without outer-page scroll.
@@ -69,7 +87,7 @@ Recent delivery cycles were driven by production-like operator feedback. Main th
 5. Admin action-bar grouping/dividers and consistent button sizing.
 6. Day-view row redesign with larger clickable name lane routing to Find Taster.
 7. Duplicate session cleanup (AM/PM mirror issues), with safer dedupe and non-destructive correction rules.
-8. Add/Leaver flows simplification (class naming cleanup, removed low-value “upcoming” signals).
+8. Add/Leaver flows simplification (class naming cleanup, removed low-value "upcoming" signals).
 9. Reschedule UX upgrades (date options in weekly cadence and cross-location behavior fixes).
 10. Email preference/layout refinements in settings.
 11. Data safety guards around duplicate leavers and import-side normalization.
@@ -93,7 +111,11 @@ For each feature set:
 Minimum pass criteria:
 
 - Auth/login and first-password gate behavior verified.
-- Add Taster flow (date suggestion, save, duplicate guardrails) verified.
+- Add Taster flow (class selection, review card, confirm, duplicate guardrails) verified.
+- Confirm Taster summary card renders correctly in both dark and light mode.
+- Hotlead bin actions: permanent delete in Claim section (admin), archive in My Hotleads section (all users).
+- My Notes page: to-do items and notes save correctly; sidebar count reflects open tasks.
+- Search hotlead filters (status, claimed) function correctly and are role-gated where expected.
 - Day view checklist actions and Find Taster deep-linking verified.
 - Find Taster search/filter interactions performant under representative data volume.
 - Admin Tasks and layout/scroll behavior verified at default browser zoom.
