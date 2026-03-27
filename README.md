@@ -19,6 +19,10 @@ If you would like a similar tailored system for your club or business, contact m
 - 2026-03-23: Hotleads automatically marked complete when a taster is scheduled from them.
 - 2026-03-22: Hotleads access control moved into admin settings, collapsible search filters, admin task panel repositioning, Cloudflare worker workflow improvements, and search page viewport fixes.
 - 2026-03-21: Database startup resilience improvements (deferred init, 503 fallback during outages).
+- 2026-03-11 to 2026-03-10: Hotlead workflow rollout, dashboard hotlead scrolling, no-space/archive controls, tablet attendance refinements, and admin action alignment cleanups.
+- 2026-03-06 to 2026-03-05: Mover reliability fixes, admin-task edit/archive shortcuts, leaver edit/delete actions in Search, login fallback hardening, and stronger orange missed/leaver cues.
+- 2026-03-03 to 2026-03-01: Branding/favicon refresh, mover search/edit rollout, search redesign, async day/month navigation, settings/light-mode polish, and stats monthly breakdown updates.
+- 2026-02-27: Find Taster workflow cleanup, including button-triggered search, View Note modal fixes, compact source badges, and responsive scaling improvements.
 - 2026-02-25: Dashboard and Stats layout refinements, month-view spacing fixes, and faster Find Taster experience.
 - 2026-02-25: Day-view improvements with larger clickable taster rows and direct search handoff into Find Taster.
 - 2026-02-25: Data quality safeguards for duplicate/mirrored session handling and safer leaver upsert behavior.
