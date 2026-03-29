@@ -1,8 +1,10 @@
 # Tasterist
 
-Hi, I am James Gardner, and I build bespoke class management systems for clubs and activity businesses.
+Hi, I am James Gardner, and I build completely bespoke class management systems for sports clubs and activity businesses, currently used full-time by Pennine Gymnastics Club in Huddersfield, UK.
 
-Tasterist is a custom platform designed around real admin workflows: managing tasters, leavers, attendance/admin actions, and reporting in one place.
+Tasterist is a custom platform designed around real admin workflows: managing tasters, leavers, contacting andinviting members, attendance/admin actions, and reporting in one place.
+
+My aim is to make administration as easy as possible in order to focus on the development and enjoyment of the members of your club or activity.
 
 ## See The Landing Page
 
@@ -10,7 +12,9 @@ You can view the public landing page at [tasterist.com](https://tasterist.com).
 
 ## Bespoke Build Enquiries
 
-If you would like a similar tailored system for your club or business, contact me at [james@tasterist.com](mailto:james@tasterist.com).
+If you would like a similar tailored system for your club or business, please contact me at [james@tasterist.com](mailto:james@tasterist.com).
+
+I am more than happy to fully outline the ways I can help your business, and provide example software before committing.
 
 ## Recent Changelog Highlights
 
