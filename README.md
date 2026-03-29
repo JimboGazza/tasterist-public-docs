@@ -16,7 +16,7 @@ If you would like a similar tailored system for your club or business, please co
 
 I am more than happy to fully outline the ways I can help your business, and provide example software before committing.
 
-## Recent Changelog Highlights
+## Recent Development Highlights
 
 - 2026-03-26: Confirm Taster two-step review flow, dashboard redesign (cleaner hotlead list and visual programme stats), dedicated My Notes page, hotlead bin/delete actions, and search hotlead filter improvements.
 - 2026-03-25: Display size preference setting and completed hotlead visibility in search.
