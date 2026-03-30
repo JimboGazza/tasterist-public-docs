@@ -5,9 +5,9 @@ Auto-generated from git history.
 ## Snapshot
 
 - Current app version file: `1.0.2`
-- Current HEAD: `1cb252a`
-- Latest commit date: 2026-03-26 10:04 UTC
-- Total commits: 188
+- Current HEAD: `fd6d375`
+- Latest commit date: 2026-03-30 10:51 UTC
+- Total commits: 189
 
 ## Release Discipline
 
@@ -20,6 +20,7 @@ Auto-generated from git history.
 
 | Commit | Date (UTC) | Author | Message |
 |---|---|---|---|
+| `fd6d375` | 2026-03-30 10:51 UTC | James Gardner | Add Willow's Corner, Request to Move, hotlead and admin task improvements |
 | `d2535e6` | 2026-02-17 15:24 UTC | James Gardner | Initial app baseline with UI/admin improvements |
 | `379901f` | 2026-02-17 15:44 UTC | James Gardner | Fix Excel 4:45 slot matching and harden login import |
 | `1cfc4f3` | 2026-02-17 15:58 UTC | James Gardner | Fix leaver slot sync by day/time and add leaver checklist fields |
