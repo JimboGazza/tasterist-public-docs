@@ -5,9 +5,9 @@ Auto-generated from git history.
 ## Snapshot
 
 - Current app version file: `1.0.2`
-- Current HEAD: `fd6d375`
-- Latest commit date: 2026-03-30 10:51 UTC
-- Total commits: 189
+- Current HEAD: `9d9920f`
+- Latest commit date: 2026-04-03 15:19 UTC
+- Total commits: 287
 
 ## Release Discipline
 
@@ -210,4 +210,9 @@ Auto-generated from git history.
 | `efbff5b` | 2026-03-25 15:21 UTC | James Gardner | Add completed hotleads and search visibility |
 | `51026ad` | 2026-03-25 15:34 UTC | James Gardner | Add display size preference |
 | `5b86b2e` | 2026-03-25 15:46 UTC | James Gardner | Refine desktop smaller dashboard mode |
+| `9d9920f` | 2026-04-03 15:19 UTC | James Gardner | Add Willow's Corner insurance notice feature |
+| `c5e4c5f` | 2026-03-31 10:02 UTC | James Gardner | Add hotlead stats to Open Admin Tasks; tighten row layout |
+| `50609ad` | 2026-03-31 09:59 UTC | James Gardner | Fast toggle buttons in hotleads via fetch (no page reload) |
+| `286a327` | 2026-03-31 09:41 UTC | James Gardner | Hotleads pipeline, sidebar, button consistency + UI polish |
+| `fd6d375` | 2026-03-30 09:51 UTC | James Gardner | Add Willow's Corner, Request to Move, hotlead and admin task improvements |
 | `1cb252a` | 2026-03-26 10:04 UTC | James Gardner | Dashboard redesign, confirm taster flow, hotlead filters and bin, my-notes page |

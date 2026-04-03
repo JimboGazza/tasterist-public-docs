@@ -70,6 +70,20 @@ The complete commit-by-commit history is in `docs/RELEASE_HISTORY.md`. Major pha
 9. Branding refresh, mover workflow rollout, search redesign, and light-mode polish.
 10. Hotleads pipeline, My Notes page, Confirm Taster flow, and dashboard redesign.
 11. Willow's Corner, Request to Move, admin task improvements, and operational fixes.
+12. Willow's Corner UX polish: dashboard integration, red/green section states, individual notice cards, admin console Feature Access redesign, and bug fixes.
+
+## Operator Request Timeline (Sprint — April 2026)
+
+1. **Dashboard tasters alignment**: Tasters in today's programme boxes now stack from the top (`align-content: start`) rather than distributing evenly. Willow notices appear pinned at the bottom of each box.
+2. **Willow notice class detail in dashboard**: Each dashboard Willow notice strip shows class start time, location, and duration in minutes — looked up from `class_sessions` at render time using a `(programme, class_name)` compound key.
+3. **Red highlight for Willow sections**: Both the dashboard notice strip and the day view Willow section use a red-tinted background to signal urgency. When all BG toggles are done the section reverts to green. Active attended/BG buttons stay green within the green state via `.not(.active)` specificity, avoiding `!important` conflicts.
+4. **Neutral-to-green toggle buttons**: Day view Willow toggle buttons are neutral (dark red–tinted) by default and go green only when activated. The copy-name button follows the same pattern.
+5. **Account admin Feature Access card**: Hotleads, Willow's Corner, and Move Requests access toggles consolidated into a single three-column "Feature Access" card. Section headings given icons. "Weekly Email Reports" renamed "Email & Reports".
+6. **Day view note and message buttons**: Each Willow notice row in the day view gains a pencil (edit note) button and an envelope (message Willow) button. The message modal is identical to the Admin Tasks message flow. Post-action redirect uses `request.referrer` so staff return to the day view, not admin tasks.
+7. **Admin tasks BG-done filter**: Willow notice rows disappear from Admin Tasks once BG is ticked (`bg_done=0` filter on query). No red background styling — the insurance indicator next to the name is sufficient.
+8. **Willow's Corner individual cards**: Notice entries in Willow's Corner are now individual bordered cards (matching the `.followup-row` pattern: `background: #0f2419`, `border: 1px solid #214a31`, `border-radius: 10px`) rather than border-bottom dividers inside a shared outer card.
+9. **Overdue hotlead label bug fix**: Dashboard was showing "Workflow complete" for overdue leads because `next_due_label` is empty when `is_overdue=True`. Template now checks `lead.is_overdue` first in both compact and desktop hotlead lists.
+10. **nextOccurrence date bug fix**: Add Notice modal was rolling same-day selections forward a week due to `if (diff <= 0)`. Fixed to `if (diff < 0)` so selecting today's day of week correctly produces today's date.
 
 ## Operator Request Timeline (Sprint — March 2026, late)
 
