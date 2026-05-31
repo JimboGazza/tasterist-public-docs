@@ -11,15 +11,23 @@ It is intended to be GitHub-facing project documentation and should be updated a
 Tasterist is an operations-first web app for class/taster administration:
 
 - Dashboard, Today, Month, and Stats operational views.
-- Add Taster (with two-step review/confirm flow) and Record Leaver flows.
-- Mover workflow for planned class/session changes.
+- Add Taster and Record Leaver flows, including simplified class-first/date-second taster booking.
 - Find Taster search/edit/reschedule workflow.
-- Admin Tasks workflow for attendance/admin checklist completion.
-- Hotleads pipeline for waiting-list contacts: claim, action, archive, and delete.
-- My Notes page for personal to-do lists and free-text notes.
+- Admin Tasks workflow for attendance/admin checklist completion, hotlead/payment follow-up rails, and Recently Completed / Archive review.
+- Mover workflow for class transfers.
+- Hotleads pipeline for waiting-list contact management, Facebook leads, starter interest, and popup-first actioning.
+- Overdue Payments workflow for payment follow-ups, contact history, Search/Admin Tasks integration, and left-club leaver handoff.
+- Staff Overview and profile pages for manager/admin workload oversight.
+- Team and personal to-do workflows, including a dedicated Elle board and extended personal priority boards.
 - Account management with role controls and password security gates.
-- Email scheduling/reporting with Cloudflare worker integration.
+- Help / suggestion reporting with owner email delivery and in-app reply threading.
+- Email scheduling/reporting via direct Purelymail SMTP + Render cron.
 - Import workflows for external class data.
+- Class CSV upload workflow for structured class-data ingestion.
+- Tablet tools: whiteboard, stopwatch/timer, deck of cards/Ring of Fire, true/false, colour score game, resources, and joke of the day.
+- Willow's Corner: role-specific view with insurance notice feature.
+- Backup Centre for admin data snapshots.
+- Public marketing landing page.
 
 ## Architecture Overview
 
@@ -34,26 +42,38 @@ Tasterist is an operations-first web app for class/taster administration:
 
 - `tasters`: Child taster records and checklist flags (attendance, club fees, BG, badge).
 - `leavers`: Child leaver records and checklist completeness.
-- `movers`: Planned class moves with source/destination session data, attendance, LoveAdmin completion, and notes.
-- `move_requests`: Inbound parent requests to move a child to a different class day.
 - `users`: Auth accounts with roles and password-change enforcement flags.
 - `user_admin_days`: User ownership mapping for admin day/programme cells.
 - `class_sessions`: Timetable/session templates.
-- `hotleads`: Waiting-list contact pipeline entries. Status flags: `claimed`, `no_space`, `inactive`, `completed`. Access mode is admin-configurable via `app_settings`.
-- `willow_notices`: Insurance-related notices raised by Willow (insurance contact). Tracks attendance and BG completion per notice.
 - `audit_logs`: App-level operational and security actions.
-- `app_settings`: Feature switches and environment-backed behavior. Current toggles: `hotleads_access` (off/admin/all), `willows_corner_access` (off/on), `move_requests_access` (off/on), `email_owner_only`.
+- `app_settings`: Feature switches and environment-backed behavior.
+- `support_reports`: Stored help / suggestion / bug reports, including reporter details, source path, body, and attachment metadata.
+- `support_report_replies`: Linked reply records for operator responses, including recipient, body, attachment metadata, draft/sent/failed state, and timestamps.
+- `class_data_slots`: One row per class slot for external class CSV freshness, expiry day, and latest upload state.
+- `class_data_uploads`: Append-only upload snapshots for each class slot.
+- `class_data_rows`: Parsed child-level class data rows kept separate from operational taster records.
+- `chasing_payments`: Parent overdue-payment follow-up records with status, owner label, and note state.
+- `chasing_payment_contacts`: Child contact-history rows for calls and voicemails linked to chasing payment records.
+- `admin_task_archives`: Restorable archive rows for Admin Tasks items.
+- `dashboard_todos` / `dashboard_section_todos`: Normal personal To-Dos and extended priority-board To-Dos.
+- `hotleads`: Waiting-list leads, including optional contact details, Facebook source flag, completion state, and starter-interest links.
+- `move_requests`: Class move and starter-interest requests, including linked source hotleads where applicable.
+- QA database routing: fixed QA accounts can be routed to the live DB or an isolated celebrity-seeded SQLite test DB through `qa_database_mode`.
 
 ## Security and Access Controls
 
 - CSRF enforced on write operations.
 - Login rate limiting and lockout windows.
-- Owner/admin role checks for privileged operations.
+- Role checks centered on `admin`, `manager`, `staff`, `willow`, `elle`, and `tablet`.
+- Legacy `owner` compatibility remains in selected code paths, but the live role model now centers on `admin`.
+- Taster edit/reschedule is available to signed-in non-tablet users; destructive taster deletion remains admin-controlled.
+- Admin Console includes an admin-only QA Tools panel for fixed QA accounts:
+  `qa-staff@tasterist.test`, `qa-willow@tasterist.test`, `qa-manager@tasterist.test`,
+  `qa-elle@tasterist.test`, and `qa-tablet`.
+- QA Tools are intentionally exact-match only: they can create/reset the fixed QA accounts, force non-tablet QA password resets, restore QA admin-day defaults, and audit every change, but cannot target real users.
+- QA database mode is also exact-match protected: only the fixed QA account usernames can be routed to the isolated test database.
 - Mandatory password-change flow for first login / default-password accounts.
 - Emergency owner credential path controlled by env/secret values.
-- Hotlead hard-delete (permanent removal) gated on admin role (`can_view_all_hotleads`).
-- Willow's Corner access gated to `willow`, `admin`, `manager`, and `owner` roles, and only when feature is enabled via `app_settings`.
-- Request to Move access gated to all non-tablet users when feature is enabled via `app_settings`.
 
 ## Development Timeline Summary
 
@@ -67,62 +87,96 @@ The complete commit-by-commit history is in `docs/RELEASE_HISTORY.md`. Major pha
 6. Dashboard/day/month/admin UX iteration and layout scaling.
 7. Find Taster performance and quality-of-life tooling.
 8. Stats/dashboard metric realignment and operational reporting updates.
-9. Branding refresh, mover workflow rollout, search redesign, and light-mode polish.
-10. Hotleads pipeline, My Notes page, Confirm Taster flow, and dashboard redesign.
-11. Willow's Corner, Request to Move, admin task improvements, and operational fixes.
-12. Willow's Corner UX polish: dashboard integration, red/green section states, individual notice cards, admin console Feature Access redesign, and bug fixes.
+9. Post-launch: mover workflow, hotleads pipeline, branding, dashboard redesign.
+10. Email infrastructure migration (Cloudflare → Purelymail SMTP + Render cron).
+11. Public marketing landing page.
+12. Tablet tools suite (whiteboard, stopwatch/timer, deck of cards, true/false, resources).
+13. Support reply workflow and admin console / class upload polish.
+14. Chasing Payments workflow with Search/Admin Tasks integration.
+15. Full otter branding rollout, role reset, popup-first Hotleads, team workboards, and performance passes.
+16. May 2026 QA follow-up: Staff Overview, archive-aware Admin Tasks, Search cleanup, Hotlead starter interest, extended personal To-Do boards, tablet persistence, and Padel Americano scheduling.
+17. Late May 2026 polish: Request to Move callbacks, staff To-Do board links, QA test DB mode, tablet resources/colour game/jokes, Overdue Payment left-club flow, and Padel playoff/fairness improvements.
 
-## Operator Request Timeline (Sprint — April 2026)
+## May 2026 QA Follow-Up
 
-1. **Dashboard tasters alignment**: Tasters in today's programme boxes now stack from the top (`align-content: start`) rather than distributing evenly. Willow notices appear pinned at the bottom of each box.
-2. **Willow notice class detail in dashboard**: Each dashboard Willow notice strip shows class start time, location, and duration in minutes — looked up from `class_sessions` at render time using a `(programme, class_name)` compound key.
-3. **Red highlight for Willow sections**: Both the dashboard notice strip and the day view Willow section use a red-tinted background to signal urgency. When all BG toggles are done the section reverts to green. Active attended/BG buttons stay green within the green state via `.not(.active)` specificity, avoiding `!important` conflicts.
-4. **Neutral-to-green toggle buttons**: Day view Willow toggle buttons are neutral (dark red–tinted) by default and go green only when activated. The copy-name button follows the same pattern.
-5. **Account admin Feature Access card**: Hotleads, Willow's Corner, and Move Requests access toggles consolidated into a single three-column "Feature Access" card. Section headings given icons. "Weekly Email Reports" renamed "Email & Reports".
-6. **Day view note and message buttons**: Each Willow notice row in the day view gains a pencil (edit note) button and an envelope (message Willow) button. The message modal is identical to the Admin Tasks message flow. Post-action redirect uses `request.referrer` so staff return to the day view, not admin tasks.
-7. **Admin tasks BG-done filter**: Willow notice rows disappear from Admin Tasks once BG is ticked (`bg_done=0` filter on query). No red background styling — the insurance indicator next to the name is sufficient.
-8. **Willow's Corner individual cards**: Notice entries in Willow's Corner are now individual bordered cards (matching the `.followup-row` pattern: `background: #0f2419`, `border: 1px solid #214a31`, `border-radius: 10px`) rather than border-bottom dividers inside a shared outer card.
-9. **Overdue hotlead label bug fix**: Dashboard was showing "Workflow complete" for overdue leads because `next_due_label` is empty when `is_overdue=True`. Template now checks `lead.is_overdue` first in both compact and desktop hotlead lists.
-10. **nextOccurrence date bug fix**: Add Notice modal was rolling same-day selections forward a week due to `if (diff <= 0)`. Fixed to `if (diff < 0)` so selecting today's day of week correctly produces today's date.
+The May 2026 pass was driven by a full live-app QA checklist and operator review. It tightened safety, reduced visual clutter, and made the busiest pages fit real laptop/desktop screens with internal scrolling instead of page sprawl.
 
-## Operator Request Timeline (Sprint — March 2026, late)
+### Staff Overview
 
-1. **Willow's Corner** (`/willows-corner`): New insurance notice management page for a dedicated `willow` role. Willow creates notices per child/class day/programme; staff mark attendance (3-state: none → attended → missed) and BG completion. Notices appear inline in Admin Tasks "To Action" list alongside tasters/leavers/movers, and in the day view and tablet today view with class time prefix and copy-name button. Archived notices move to a read-only section.
-2. **Request to Move** (`/move-requests`): New page for managing inbound parent requests to move a child to a different class day. Staff can log, track contact status, add notes, and archive requests. Open requests appear in the Admin Tasks top summary grid (third column).
-3. **Feature flags for new sections**: Both Willow's Corner and Request to Move are off by default and toggled independently via Admin Console (same radio-button pattern as Hotleads access). Allows controlled rollout without a code redeploy.
-4. **Admin Tasks 3-column grid**: Top summary grid expanded from 2 to 3 columns — Leavers, Tasters to Members, and Move Requests. Willow notices appear inline in the To Action list with their own action buttons (not a separate card).
-5. **Hotlead auto-complete on taster schedule**: Scheduling a taster now automatically marks any active hotlead with a matching child name as completed. Previously only worked when a hotlead was explicitly linked via `source_hotlead_id`.
-6. **Hotlead claimable date fix**: Claimable cards on the dashboard now show "Added X days ago" (using `waitlist_added_at`). Previously showed "Added date unknown" because the due-date field was empty for unclaimed leads.
-7. **Hotlead completed section delete**: Permanent delete button added to collapsed inactive hotlead rows (admin only), on the opposite side from the reactivate button.
-8. **Hotlead age field**: "Add to waiting list" replaced with an age dropdown (1–17) when adding a new hotlead. Age shown in claimable and active card subtitles.
-9. **Hotlead stats redesign**: Removed "Ready to Archive" and "Tomorrow" stats. Added "Completed This Month". Layout is 2 per row: My Active / Unclaimed, Due Today / Overdue, Next 7 Days / Completed This Month.
-10. **Day/today view willow notices**: Class time prefix looked up from `class_sessions` and prepended to class name (e.g. "09:15 – Mini Roos"). Copy-name button added.
-11. **Remove ui_density preference**: The bigger/smaller display size preference was unused (never wired to CSS/templates) and has been fully removed from session, user loading, and constants.
+- `/staff` is the manager/admin/Elle overview for operational staff workload.
+- Staff/willow/tablet users are blocked from the all-staff list; optional own-profile behavior remains scoped by route checks.
+- QA and admin/service accounts are filtered out of the staff grid unless they are a real operational account that needs to appear.
+- Staff cards show admin task counts, overdue admin work, payments, and claimed hotleads over the same recent window as Admin Tasks.
+- Staff profile pages combine scoped Admin Tasks, To-Do, Hotleads, Overdue Payments, and stats in a brand-aligned layout.
+- Staff profile To-Do is intentionally simple: `Add task` plus `Open Board` / `Open List`.
+- Opening a staff member's list routes to `/staff/<id>/todo`, giving managers/admins a full board/list view rather than a cramped embedded cell.
+- Added staff tasks land in the correct extended priority section or normal To-Do list based on the target account's setting and selected priority.
 
-## Operator Request Timeline (Sprint — March 2026, early)
+### Admin Tasks
 
-1. **Confirm Taster flow**: Two-step review/confirm on the Add Taster page so staff can check details before saving. Centered summary card shows taster date, class, session, location, child name, notes, and any hotlead link or reschedule context.
-2. **Dashboard redesign**: Hotlead rows rendered as a clean borderless list (fixed 34px row height, no card gaps). "This Month By Programme" replaced with visual stat blocks per programme.
-3. **My Notes page** (`/my-notes`): Dedicated page for personal to-do list (left) and free-text notes (right), linked from the sidebar OVERVIEW section. Sidebar nav shows open task count.
-4. **Hotlead bin/delete actions**: "No Space" button replaced with a bin icon. In Claim Hotleads (unclaimed leads), bin permanently deletes the record (admin only). In My Hotleads (claimed leads), bin archives the lead (marks no_space, keeps record). "Show Completed" renamed to "Show Completed / Archive".
-5. **Search hotlead improvements**: Delete button added to hotlead rows in search results (admin only). New filter groups: "Hotlead Status" (active / no space / inactive) and "Hotlead Claimed" (unclaimed / claimed).
-6. **Light mode fixes**: Confirm taster card fully themed for light mode.
-7. **Database resilience**: Deferred database init until first request, 503 fallback while DB is unavailable, reduced startup stalls.
-8. **Hotleads access control**: Mode setting moved into Admin Console (`app_settings`) rather than environment variable.
-9. **Search page viewport**: Panels constrained to viewport height, collapsible filter sidebar.
-10. **Cloudflare worker workflow**: Automated deploy, local-only worker mode, preserved environment variables on redeploy.
+- `/admin/tasks` supports `archive=only`, preserving `view` and `staff_user_id`.
+- The bottom section is now `Recently Completed / Archive`, built from archived rows plus recently completed operational items in the three-month lookback.
+- All restore buttons are archive-only; completed rows remain non-restorable.
+- Hotleads Due and Payment Chases were moved into the right rail so the main To Action queue can focus on tasters, leavers, movers, insurance, and move requests.
+- Contacted tasters use a reduced primary action set: Contacted, Reschedule, Open, plus secondary actions in More.
 
-## Operator Request Timeline (Late February to Early March 2026)
+### Search and taster lifecycle
 
-1. **Find Taster cleanup**: Button-triggered search, stabilized `View Note` modal wiring, compact source badges, and responsive scaling/reset fixes.
-2. **Branding refresh**: Uploaded Tasterist logo and favicon assets replaced older branding across login UI and browser chrome.
-3. **Mover workflow rollout**: Add/edit/search/delete flows for movers, source/destination session selection, cross-facility fixes, and Postgres-safe query/insert handling.
-4. **Search redesign**: Wider flatter rows, status/icon cleanup, admin-day and class-fees filters, async toggles, known-record default, and faster day/month navigation.
-5. **Light theme and settings polish**: Rebuilt light palette, settings card proportions, admin-task contrast fixes, and more stable email preference layouts.
-6. **Dashboard and admin refinements**: Personal notes/todos, archived shortcut, action alignment, missed/leaver orange emphasis, and internal scrolling in the dashboard hotlead area.
-7. **Hotlead rollout groundwork**: Initial hotlead workflow changes, default enablement, completion/no-space controls, and dashboard list behavior refinements.
+- Search has one always-visible main query input, URL-synced search state, clearer helper copy, and labelled row actions.
+- Admin Cleanup Mode remains admin-only with typed confirmation, a 25-row cap, and audit logging.
+- Role-safe remove/archive paths exist from Day view, Search, and Edit Taster, while tablet users remain blocked from desktop destructive actions.
+- Tasters created from hotleads are included in Search so staff can reschedule them by name.
+- Add/reschedule taster now selects class day/time first, then exact date on the next step; Confirm Taster makes location and cross-location swap clearer.
 
-## Operator Request Timeline (Previous Sprint — February 2026)
+### Hotleads and starter interest
+
+- Hotleads uses an Admin Tasks-style layout: active leads in a large scrollable left list, claimable leads in the top-right panel, stats below.
+- Add Hotlead supports optional Facebook/contact fields: parent name, email, phone, child name, and child age.
+- Facebook rows keep the Facebook indicator but avoid crowding cards with contact pills; full contact details are available where follow-up happens.
+- Register Interest creates a linked Starter move request and marks the hotlead with a requested-callback style outcome while keeping notes and history.
+- Starter requests can reactivate the linked hotlead from zero contacts without losing history.
+
+### Extended To-Do
+
+- The Extended To-Do preference only controls personal To-Do routing/display.
+- Elle is always routed to the extended board; other enabled users go to `/my-todo`, while disabled users keep the modal.
+- Extended sections have editable names, priority levels, dashboard visibility, and internal scroll.
+- Existing normal To-Dos migrate into extended sections on first use so switching an existing account does not lose data.
+- Managers/admins can view staff extended boards through Staff Overview without granting the staff member broader permissions.
+
+### Request to Move callbacks
+
+- `/move-requests` separates normal move requests from `Callbacks / Starters`.
+- `Add Callback` creates a starter callback item with exact DOB, programme/facility, requested day, callback due date, and optional notes.
+- Callback due dates feed Admin Tasks for the user who added the callback when the due date arrives.
+- Callback rows support contacted toggles, schedule-taster handoff, postpone callback, archive, notes, and linked-hotlead reactivation.
+- Callback/starter rows use the same natural row height and packed-top scroll behavior as normal move requests.
+
+### Tablet, Padel, and Stats
+
+- Tablet Ring of Fire / deck state saves locally and flushes server-side so accidental navigation does not reset the activity.
+- Public `/resources` is available without login, while `/tablet/resources` remains the tablet-focused entry point.
+- Daily Spark uses Joke of the Day instead of historical “On This Day” entries.
+- Colour Score Game supports tablet-scale scoring, negative totals, local persistence, and distinct team icons.
+- Padel supports Americano-style personal scoring for small groups, multi-court fill-first scheduling, court labels, anti-repeat sit-out balancing, playoff/final structure, and compact score controls.
+- Stats keeps the main graph prominent, with Monthly Breakdown and Admin Days moved into lower collapsible panels.
+
+### QA test database
+
+- Admin settings include a QA database toggle for fixed QA accounts only.
+- `Beyonce` labels the live DB mode.
+- `Dolly Parton` labels the isolated celebrity-populated test DB mode.
+- The test DB is seeded with celebrity-style dummy names and operational rows for realistic QA without polluting live data.
+
+### Overdue Payments
+
+- Completion options are `Paid`, `Payment Plan`, and `Left the club`.
+- `Left the club` completes the active reminder and provides an `Add as leaver` handoff into Record Leaver.
+- Completed payment reminders leave live Overdue Payments and Admin Tasks queues.
+
+## Operator Request Timeline (Recent Sprint)
+
+Recent delivery cycles were driven by production-like operator feedback. Main themes:
 
 1. Dashboard and stats graph readability and placement of tasters/leavers context text.
 2. Month/day/add/admin layout scaling so cards align to viewport without outer-page scroll.
@@ -131,13 +185,246 @@ The complete commit-by-commit history is in `docs/RELEASE_HISTORY.md`. Major pha
 5. Admin action-bar grouping/dividers and consistent button sizing.
 6. Day-view row redesign with larger clickable name lane routing to Find Taster.
 7. Duplicate session cleanup (AM/PM mirror issues), with safer dedupe and non-destructive correction rules.
-8. Add/Leaver flows simplification (class naming cleanup, removed low-value "upcoming" signals).
+8. Add/Leaver flows simplification (class naming cleanup, removed low-value “upcoming” signals).
 9. Reschedule UX upgrades (date options in weekly cadence and cross-location behavior fixes).
 10. Email preference/layout refinements in settings.
 11. Data safety guards around duplicate leavers and import-side normalization.
 12. Ongoing cross-device scaling adjustments for desktop monitor behavior.
 13. Find Taster responsiveness improvements and filter model refinements.
 14. Current hardening pass for deployment readiness.
+15. Reply-to-Suggestion workflow so owner/operator can respond directly from stored reports without losing original context.
+16. Full performance pass across Search, Month, Day, Dashboard, Stats, Hotleads, and Admin Tasks.
+17. Popup-first Hotlead workflow, with modal history/notes/actions and reduced full-page redraws.
+18. Role reset across admin/manager/staff/willow/elle/tablet, including the dedicated Elle board and wider role-based access cleanup.
+
+## Reply to Suggestion Workflow
+
+This workflow starts from the existing help / suggestion email flow and adds a stored thread model so the owner can reply quickly from inside Tasterist.
+
+### Flow Summary
+
+1. Signed-in staff submits a help / suggestion / bug report.
+2. The app stores the report in `support_reports` before attempting email delivery.
+3. The owner receives the usual report email, now with a `Reply to Suggestion` action link.
+4. Opening that link loads an in-app reply screen with:
+   - recipient prefilled from the original report sender
+   - default editable thank-you reply
+   - original report subject, sender, source path, body, and attachments visible while composing
+   - file attachment support
+5. Replies are stored in `support_report_replies` as drafts or sent/failed replies.
+6. Outgoing reply emails include the operator reply and the original report content underneath for context.
+
+### Persistence Model
+
+- `support_reports` stores the original inbound report and delivery state for the owner-facing notification email.
+- `support_report_replies` stores linked reply records by `report_id`.
+- Attachments are stored as JSON metadata plus base64 content so they can be reused for resend/reply email delivery.
+- Audit logs are written for draft save, send, and resend actions.
+
+### Operator UX Notes
+
+- The fastest path is `Quick Send Default`, which sends the default thank-you message unchanged.
+- `Save Draft` keeps the thread attached to the original report so the owner can return later.
+- Failed sends stay visible in reply history and can be resent from the same thread page.
+- Admin Console now surfaces a `Recent Suggestions` list so the owner has an in-app inbox entry point, even without opening the email first.
+
+## Class CSV Upload Workflow
+
+This workflow provides owner/admin access to structured class-data uploads without merging them into the live taster workflow yet.
+
+### Flow Summary
+
+1. Open `Admin Console`.
+2. Use `Upload Classes` to open the class upload grid.
+3. Choose a programme and click a class slot tile.
+4. A modal opens with:
+   - selected class/day/time
+   - CSV file picker
+   - `Done`
+   - `Cancel`
+5. Upload validation confirms the selected slot matches the CSV metadata.
+6. Successful uploads append a snapshot and refresh the slot state.
+
+### UI Notes
+
+- The upload grid intentionally uses the same class-tile sizing language as Add Taster / Add Leaver so the page feels familiar.
+- Slot status is shown by stronger border states:
+  - green = fresh upload
+  - orange = overdue refresh
+  - neutral = awaiting first upload
+- Each day column uses its own internal scroll region so dense programmes remain usable without growing the whole page.
+
+## Overdue Payments Workflow
+
+This workflow adds a manual payment follow-up lane at `/admin/payments`, reusing Hotleads/Admin Tasks/Search interaction patterns rather than introducing a new UI system.
+
+### Access Model
+
+- Allowed roles: `admin`, `manager`, `staff`, `willow`, `elle`
+- Blocked roles: `tablet`, anonymous
+- `admin` and `manager` can see all payment follow-ups.
+- `staff`, `willow`, and `elle` work from their own view, while Search can still surface broader record visibility.
+- Allowed roles can create records and log contacts; the page now centers on operational follow-up rather than legacy admin-only ownership rules.
+
+### Persistence
+
+- `chasing_payments` stores the main record:
+  - child
+  - class day
+  - programme
+  - cached owner label
+  - creation note
+  - active/completed/completed-plan status
+  - created/updated/completed/reactivated timestamps
+- `chasing_payment_contacts` stores each logged contact event:
+  - type (`call` / `voicemail` / `email`)
+  - required note
+  - creator
+  - created/updated timestamps
+
+### Page Structure
+
+- `/admin/payments` shows:
+  - summary cards for Active / Completed / Completed - Plan / Mine / All
+  - active list first
+  - collapsible completed list underneath
+  - Add Overdue Payment modal
+  - Add Contact modal
+  - Payment Plan modal
+  - Edit modal
+  - History modal
+
+### Integration Points
+
+- `Admin Tasks`
+  - active payment chases appear as payment follow-up rows with an `Open` button
+- `Search`
+  - payment chases appear as payment record types with `Open`, `View History`, and `Delete`
+- shared child autocomplete
+  - create/edit child fields use the same `/child-name-suggestions` endpoint as other child-entry flows
+
+### Contact Indicator Rules
+
+- newest 4 contacts render inline
+- calls use a green pill
+- voicemails use an amber mic-style pill
+- emails use an envelope-style pill
+- extra contacts collapse into `+N`
+- tooltip text includes:
+  - contact type
+  - UK-formatted date/time
+  - user who logged it
+
+## Launch Day Update (2026-02-27)
+
+This launch-day wave is the largest UX + reliability pass so far. It is intentionally broad and focused on operational confidence under real admin usage.
+
+### Primary Outcomes
+
+- End-to-end UI scaling stabilized across Dashboard, Month, Today/Day, Add, Leaver, Find Taster, and Admin Tasks.
+- Data safety significantly improved around mirrored duplicates, reschedule edge cases, and duplicate leaver handling.
+- Find Taster moved from “heavy and fragile at zoom” to “stable and fast enough for daily admin use”.
+- Reschedule behavior now supports same-day shifts (for example +30 minutes) without false duplicate blocking.
+
+### Key Launch-Day Deliverables
+
+- Month-view initial circles now communicate outcome state for past tasters (missed/attended/fully complete).
+- Find Taster list redesigned to one-line names, controlled note rendering (`View Note` modal), and fixed action lanes.
+- Add/Leaver week grid sizing normalized with consistent tile/day widths and reduced layout drift.
+- Sidebar active marker simplified to border-only state (dot removed) for cleaner navigation feedback.
+- Settings and support workflows refined for cleaner control placement and better operator confidence.
+- Admin Tasks spacing, grouping, overflow behavior, and to-action semantics refined.
+- Day rows redesigned for larger click targets and direct Find Taster deep links.
+
+### Bug-Fix Concentration Areas
+
+- Repeated chart growth/render regression in stats.
+- Month bottom-row clipping and jump-panel overlap.
+- Residual shell scrolling on add/admin pages.
+- Button-size inconsistency across action groups.
+- Reschedule same-day duplicate false positives.
+- Search clear/interaction rough edges in Find Taster link-through flows.
+- Import-driven AM/PM duplicate noise and non-destructive correction logic.
+
+## Tablet Tools Suite
+
+Five tablet-optimised tools for class/session use, all accessible from the tablet nav bar.
+
+### Tools
+
+- **Tablet setup** (`templates/tablet_setup.html`) — shared tablet account location picker. First use asks staff to choose Honley or Lockwood, stores the choice in a cookie, and exposes a Change Location route for deliberate resets.
+- **Whiteboard** (`templates/tablet_whiteboard.html`) — freehand canvas backed by location-scoped `app_settings` keys, with legacy fallback from `users.tablet_whiteboard_data`. Honley and Lockwood/Preschool tablets keep separate boards. Saves on draw-end, loads on open. Clear resets to blank and saves the empty state.
+- **Stopwatch / Timer** (`templates/tablet_stopwatch_timer.html`) — dual-mode: countdown timer (user sets duration) and running stopwatch. No server state; fully client-side.
+- **Deck of Cards** (`templates/tablet_deck_of_cards.html`) — shuffles a full deck and draws one card at a time. Useful for games and warm-ups.
+- **True / False** (`templates/tablet_true_false.html`) — large-display binary answer tool for class activities.
+- **Resources** (`templates/tablet_resources.html`) — curated content list driven by `tablet_resources_content.py` (keeps content out of the template).
+
+### Design Notes
+
+- All tools share the same tablet-first CSS language and are shown only when `is_tablet_user` is true.
+- Tablet location preference drives tablet defaults: Honley uses Honley only; Lockwood uses Lockwood plus Preschool.
+- Whiteboard data is stored server-side so it persists across sessions and devices for the same tablet location.
+- The resources content module (`tablet_resources_content.py`) is a plain Python list of dicts, making it easy to add/reorder entries without touching HTML.
+
+## Hotleads Pipeline
+
+A waiting-list contact management pipeline. Access is controlled by `hotleads_access_mode()` which reads from the `app_settings` table (admin-configurable, not an env var).
+
+### Key Behaviours
+
+- Entries move through pipeline stages; status toggles are fetch-based (no page reload).
+- Completing a hotlead is triggered automatically when a taster is scheduled from it.
+- Hotlead stats surface in the Open Admin Tasks section.
+- Completed hotleads are filterable and searchable.
+- Creation is limited to manual adds (not triggered by imports).
+
+### Data
+
+- `hotleads` table: one row per contact with stage, notes, and timestamps.
+- Dashboard card scrolls internally so it doesn't push other grid rows.
+
+## Mover Workflow
+
+A record-keeping workflow for members transferring between classes. Available to all signed-in users.
+
+### Flow
+
+1. Pick source taster record (from session).
+2. Pick target class/session.
+3. Mover row created; appears in day view and admin tasks.
+
+### Notes
+
+- Source selection persists across reloads (localStorage).
+- Mover rows shown wider in day view than taster rows to distinguish them visually.
+- Postgres-safe: date union queries patched for psycopg2 compatibility.
+- Move Requests page (`templates/move_requests.html`) gives an overview of pending/completed moves.
+
+## Email Infrastructure
+
+### Current Stack (as of Apr 2026)
+
+- **Sending**: Direct SMTP via Purelymail (`noreply@tasterist.com`).
+- **Scheduler**: Render cron job triggers the weekly report endpoint.
+- **Cloudflare worker**: Removed entirely.
+
+### What Changed
+
+The Cloudflare worker was removed in favour of direct Purelymail SMTP because the worker approach added an indirection layer that complicated debugging and deployments. The Render cron approach keeps email delivery entirely within the existing infrastructure.
+
+### Weekly Reports
+
+- Sent to opted-in users on their configured day/frequency.
+- Template widened to 700px; By Programme section collapsed to one line for readability.
+- Owner-only mode respected.
+
+## Backup Centre
+
+`templates/backups.html` — admin-accessible page for manual data backup actions. Accessible from the Admin Console. Provides download triggers for DB snapshots without requiring Render dashboard access.
+
+## Public Marketing Landing Page
+
+`templates/landing.html` — standalone marketing page served at `/`. Not part of the authenticated app shell. SEO metadata, social links, and feature copy maintained separately from the app.
 
 ## Release and Documentation Process
 
@@ -155,20 +442,8 @@ For each feature set:
 Minimum pass criteria:
 
 - Auth/login and first-password gate behavior verified.
-- Add Taster flow (class selection, review card, confirm, duplicate guardrails) verified.
-- Mover add/edit/search/delete flow verified, including source/destination persistence and cross-location handling.
-- Confirm Taster summary card renders correctly in both dark and light mode.
-- Hotlead bin actions: permanent delete in Claim section (admin), archive in My Hotleads section (all users).
-- Hotlead completed section: permanent delete button present (admin only).
-- Hotlead claimable cards show "Added X days ago" correctly.
-- Scheduling a taster with a matching hotlead child name auto-completes the hotlead.
-- My Notes page: to-do items and notes save correctly; sidebar count reflects open tasks.
-- Search hotlead filters (status, claimed) function correctly and are role-gated where expected.
-- Willow's Corner: hidden by default; enable via Admin Console, verify notice add/toggle/archive cycle.
-- Willow notices appear in day view and tablet today view with class time prefix; copy button works.
-- Willow notices appear inline in Admin Tasks To Action list with correct action buttons.
-- Request to Move: hidden by default; enable via Admin Console, verify add/contact/archive cycle.
-- Admin Tasks top grid shows 3 columns (Leavers, Tasters to Members, Move Requests).
+- Help / suggestion submit and reply flow verified, including draft save, send, and failed resend path.
+- Add Taster flow (date suggestion, save, duplicate guardrails) verified.
 - Day view checklist actions and Find Taster deep-linking verified.
 - Find Taster search/filter interactions performant under representative data volume.
 - Admin Tasks and layout/scroll behavior verified at default browser zoom.
